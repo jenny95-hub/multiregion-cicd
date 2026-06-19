@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CloudOps Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🚀 CloudOps Dashboard</h1>
+
+    <div class="card">
+
+        <h2>Application Information</h2>
+
+        <p><strong>Application:</strong> {{ data.application }}</p>
+
+        <p><strong>Environment:</strong> {{ data.environment }}</p>
+
+        <p><strong>AWS Region:</strong> {{ data.region }}</p>
+
+        <p><strong>Version:</strong> {{ data.version }}</p>
+
+        <p><strong>Status:</strong> {{ data.status }}</p>
+
+        <p><strong>Pipeline:</strong> {{ data.pipeline }}</p>
+
+        <p><strong>Deployment Time:</strong> {{ data.deployment_time }}</p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Infrastructure</h2>
+
+        <ul>
+            <li>Amazon ECS Fargate</li>
+            <li>Application Load Balancer</li>
+            <li>Amazon ECR</li>
+            <li>AWS CodeDeploy Blue-Green</li>
+            <li>Terraform Infrastructure</li>
+            <li>Jenkins CI/CD</li>
+            <li>SonarQube Quality Gates</li>
+            <li>Trivy Security Scanning</li>
+        </ul>
+
+    </div>
+
+</div>
+
+</body>
+</html>
