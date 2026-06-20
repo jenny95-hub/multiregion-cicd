@@ -211,3 +211,35 @@ __marimo__/
 *.tfstate
 *.tfstate.*
 crash.log
+
+# Terraform Variables
+terraform.tfvars
+*.tfvars
+
+# Terraform Plan Files
+*.tfplan
+plan.out
+
+# Sensitive Files
+*.pem
+*.key
+
+# VS Code
+.vscode/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# SonarQube
+.scannerwork/
+
+# Python
+__pycache__/
+*.pyc
+
+# Jenkins
+jenkins_home/
+
+# Logs
+*.log
