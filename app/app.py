@@ -8,14 +8,18 @@ app = Flask(__name__)
 def home():
 
     data = {
-        "application": "CloudOps Dashboard",
-        "environment": "Production",
-        "region": os.getenv("AWS_REGION", "ap-south-1"),
-        "version": "v1.0.0",
-        "deployment_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "status": "Healthy",
-        "pipeline": "Successful"
-    }
+    "application": "CloudOps Dashboard",
+    "environment": "Production",
+    "region": os.getenv("AWS_REGION", "ap-south-1"),
+    "version": "v1.0.0",
+    "deployment_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "status": "Healthy",
+    "pipeline": "Successful",
+    "owner": "DevOps Team",
+    "availability": "99.99%",
+    "deployment_strategy": "Blue-Green",
+    "container_platform": "Amazon ECS Fargate"
+}
 
     return render_template("index.html", data=data)
 

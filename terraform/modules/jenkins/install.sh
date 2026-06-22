@@ -4,15 +4,14 @@ apt-get update -y
 apt-get upgrade -y
 
 apt-get install -y \
-openjdk-17-jdk \
 docker.io \
 git \
-unzip \
 curl \
-wget
+wget \
+unzip
 
-systemctl start docker
 systemctl enable docker
+systemctl start docker
 
 usermod -aG docker ubuntu
 
@@ -36,12 +35,9 @@ unzip terraform_1.8.5_linux_amd64.zip
 
 mv terraform /usr/local/bin/
 
-
 #########################################
-# Jenkins via Docker
+# Run Jenkins Container
 #########################################
-
-docker volume create jenkins_home
 
 docker run -d \
   --name jenkins \
