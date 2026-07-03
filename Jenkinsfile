@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "cloudops-dashboard"
         AWS_REGION = "ap-south-1"
-        ECR_REPO = "<your-account-id>.dkr.ecr.ap-south-1.amazonaws.com/cloudops-dashboard"
+        ECR_REPO = "772693223288.dkr.ecr.ap-south-1.amazonaws.com/multi-region-cicd-app"
     }
 
     stages {
@@ -15,20 +15,28 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh '''
-                python3 -m pip install --upgrade pip
-                pip install -r app/requirements.txt
-                '''
-            }
-        }
+       stage('Install Dependencies') {
+    steps {
+        sh '''
+        python3 -m venv venv
 
-        stage('Run Tests') {
-            steps {
-                sh 'pytest tests/'
-            }
-        }
+        . venv/bin/activate
+
+        pip install --upgrade pip
+
+        pip install -r app/requirements.txt
+        '''
+    }
+}
+       stage('Run Tests') {
+    steps {
+        sh '''
+        . venv/bin/activate
+
+        pytest tests/
+        '''
+    }
+}
 
         stage('Docker Build') {
             steps {
@@ -36,22 +44,7 @@ pipeline {
             }
         }
 
-        stage('Login to ECR') {
-    steps {
-        sh '''
-        aws ecr get-login-password --region ap-south-1 | \
-        docker login --username AWS --password-stdin $ECR_REPO
-        '''
-    }
-}
-stage('Push Image to ECR') {
-    steps {
-        sh '''
-        docker tag $IMAGE_NAME:latest $ECR_REPO:latest
-        docker push $ECR_REPO:latest
-        '''
-    }
-}
+     
 
     }
 }
