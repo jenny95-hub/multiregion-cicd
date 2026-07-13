@@ -1,50 +1,72 @@
 pipeline {
+
     agent any
 
     environment {
-        IMAGE_NAME = "cloudops-dashboard"
+        AWS_ACCOUNT_ID = "772693223288"
         AWS_REGION = "ap-south-1"
-        ECR_REPO = "772693223288.dkr.ecr.ap-south-1.amazonaws.com/multi-region-cicd-app"
+        IMAGE_NAME = "cloudops-dashboard"
+        ECR_REPOSITORY = "multi-region-cicd-app"
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Install Dependencies') {
             steps {
-                checkout scm
+                sh '''
+                python3 -m venv venv
+
+                . venv/bin/activate
+
+                pip install --upgrade pip
+
+                pip install -r app/requirements.txt
+                '''
             }
         }
 
-       stage('Install Dependencies') {
-    steps {
-        sh '''
-        python3 -m venv venv
 
-        . venv/bin/activate
+        stage('Run Tests') {
+            steps {
+                sh '''
+                . venv/bin/activate
 
-        pip install --upgrade pip
+                export PYTHONPATH=$WORKSPACE
 
-        pip install -r app/requirements.txt
-        '''
-    }
-}
-       stage('Run Tests') {
-    steps {
-        sh '''
-        . venv/bin/activate
-        export PYTHONPATH=$WORKSPACE
-        pytest tests/
-        '''
-    }
-}
+                pytest tests/
+                '''
+            }
+        }
+
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:latest .'
+                sh '''
+                docker build -t $IMAGE_NAME:latest .
+                '''
             }
         }
 
-     
+
+        stage('Push to ECR') {
+            steps {
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION | \
+                docker login \
+                --username AWS \
+                --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+
+                docker tag $IMAGE_NAME:latest \
+                $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+
+                docker push \
+                $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+                '''
+            }
+        }
 
     }
 }
