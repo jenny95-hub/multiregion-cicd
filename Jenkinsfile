@@ -39,6 +39,17 @@ pipeline {
             }
         }
 
+        stage('Trivy Scan') {
+    steps {
+        sh '''
+        trivy image \
+        --severity HIGH,CRITICAL \
+        --exit-code 1 \
+        $IMAGE_NAME:latest
+        '''
+    }
+}
+
 
         stage('Docker Build') {
             steps {
