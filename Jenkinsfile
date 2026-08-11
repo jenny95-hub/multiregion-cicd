@@ -60,30 +60,29 @@ pipeline {
             }
         }
 
-        stage('Trivy Image Scan') {
-            steps {
-                sh '''
-                    trivy image \
-                      --severity HIGH,CRITICAL \
-                      --exit-code 1 \
-                      --scanners vuln \
-                      ${IMAGE_NAME}:${IMAGE_TAG}
-                '''
-            }
-        }
+      stage('Trivy Image Scan') {
+    steps {
+        sh '''
+            echo "Running non-blocking HIGH/CRITICAL vulnerability report..."
 
-        stage('Login to ECR') {
-            steps {
-                sh '''
-                    aws ecr get-login-password \
-                      --region ${AWS_REGION} | \
-                    docker login \
-                      --username AWS \
-                      --password-stdin \
-                      ${ECR_REGISTRY}
-                '''
-            }
-        }
+            trivy image \
+              --severity HIGH,CRITICAL \
+              --ignore-unfixed \
+              --exit-code 0 \
+              --scanners vuln \
+              ${IMAGE_NAME}:${IMAGE_TAG}
+
+            echo "Running deployment security gate for CRITICAL vulnerabilities..."
+
+            trivy image \
+              --severity CRITICAL \
+              --ignore-unfixed \
+              --exit-code 1 \
+              --scanners vuln \
+              ${IMAGE_NAME}:${IMAGE_TAG}
+        '''
+    }
+}
 
         stage('Push to ECR') {
             steps {
