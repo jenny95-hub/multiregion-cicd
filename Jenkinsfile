@@ -83,7 +83,20 @@ pipeline {
         '''
     }
 }
+stage('Login to ECR') {
+    steps {
+        sh '''
+            export AWS_PAGER=""
 
+            aws ecr get-login-password \
+              --region ${AWS_REGION} | \
+            docker login \
+              --username AWS \
+              --password-stdin \
+              ${ECR_REGISTRY}
+        '''
+    }
+}
         stage('Push to ECR') {
             steps {
                 sh '''
