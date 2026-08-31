@@ -25,7 +25,7 @@ resource "aws_security_group" "jenkins_sg" {
     cidr_blocks = [var.my_ip]
   }
 
-   egress {
+  egress {
     from_port = 0
     to_port   = 0
     protocol  = "-1"
@@ -72,23 +72,49 @@ resource "aws_security_group" "alb-sg" {
   tags = {
     Name = "${var.project_name}-alb-sg"
   }
-}
 
-#ECS security group
-
-resource "aws_security_group" "ecs-sg" {
-  vpc_id = var.vpc_id
   ingress {
-    from_port = 80
-    to_port   = 80
+    description = "CodeDeploy test listener"
+
+    from_port = 8081
+    to_port   = 8081
     protocol  = "tcp"
 
-    security_groups = [aws_security_group.alb-sg.id]
+    cidr_blocks = [var.my_ip]
+  }
+}
+
+
+
+# ECS security group
+
+resource "aws_security_group" "ecs-sg" {
+  name        = "${var.project_name}-ecs-sg"
+  description = "Security group for ECS Fargate tasks"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "Application traffic from ALB"
+
+    from_port = 5000
+    to_port   = 5000
+    protocol  = "tcp"
+
+    security_groups = [
+      aws_security_group.alb-sg.id
+    ]
+  }
+
+  egress {
+    from_port = 0
+    to_port   = 0
+    protocol  = "-1"
+
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
     Name = "${var.project_name}-ecs-sg"
   }
-
 }
 

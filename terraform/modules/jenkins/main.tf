@@ -19,4 +19,10 @@ resource "aws_instance" "jenkins" {
   tags = {
     Name = "${var.project_name}-jenkins"
   }
+
+  root_block_device {
+    volume_size = 20
+    volume_type = "gp2"
+    encrypted   = false
+  }
 }
