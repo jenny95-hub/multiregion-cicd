@@ -23,3 +23,9 @@ variable "container_port" {
   type        = number
   default     = 5000
 }
+
+variable "resource_name" {
+  description = "Short name used for ALB resources with AWS name limits"
+  type        = string
+  default     = null
+}

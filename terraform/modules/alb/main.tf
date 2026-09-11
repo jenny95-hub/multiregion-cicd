@@ -3,6 +3,10 @@ moved {
   to   = aws_lb_target_group.blue
 }
 
+locals {
+  resource_name = var.resource_name != null ? var.resource_name : var.project_name
+}
+
 resource "aws_lb" "app" {
   name               = "${var.project_name}-alb"
   internal           = false
@@ -22,7 +26,8 @@ resource "aws_lb" "app" {
 }
 
 resource "aws_lb_target_group" "blue" {
-  name        = "${var.project_name}-tg"
+
+  name        = "${local.resource_name}-tg"
   port        = var.container_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -45,7 +50,7 @@ resource "aws_lb_target_group" "blue" {
 }
 
 resource "aws_lb_target_group" "green" {
-  name        = "${var.project_name}-green-tg"
+  name        = "${local.resource_name}-green-tg"
   port        = var.container_port
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
@@ -77,6 +82,11 @@ resource "aws_lb_listener" "http" {
     type             = "forward"
     target_group_arn = aws_lb_target_group.blue.arn
   }
+  lifecycle {
+    ignore_changes = [
+      default_action
+    ]
+  }
 }
 
 resource "aws_lb_listener" "test" {
@@ -90,4 +100,6 @@ resource "aws_lb_listener" "test" {
     target_group_arn = aws_lb_target_group.green.arn
   }
 }
+
+
 

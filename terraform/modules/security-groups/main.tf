@@ -1,6 +1,7 @@
 #jenkins security group
 
 resource "aws_security_group" "jenkins_sg" {
+  count       = var.create_jenkins_sg ? 1 : 0
   name        = "${var.project_name}-jenkins-sg"
   description = "Security group for jenkins"
   vpc_id      = var.vpc_id

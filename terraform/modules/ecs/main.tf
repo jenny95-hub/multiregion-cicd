@@ -133,8 +133,9 @@ resource "aws_ecs_service" "app" {
 
   desired_count = var.desired_count
 
-  launch_type = "FARGATE"
-
+  launch_type                        = "FARGATE"
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
 
 
   deployment_controller {
@@ -167,7 +168,9 @@ resource "aws_ecs_service" "app" {
     ignore_changes = [
       task_definition,
       load_balancer,
-      platform_version
+      platform_version,
+      desired_count,
+      deployment_minimum_healthy_percent
     ]
   }
 

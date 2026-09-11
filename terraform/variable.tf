@@ -1,6 +1,13 @@
 variable "aws_region" {
-  description = "AWS region for infrastructure deployment"
+  description = "Primary region"
   type        = string
+  default     = "ap-south-1"
+}
+
+variable "secondary_aws_region" {
+  description = "Secondary region"
+  type        = string
+  default     = "ap-southeast-1"
 }
 
 variable "project_name" {
@@ -42,4 +49,20 @@ variable "enable_nat_gateway" {
   description = "Enable NAT Gateway"
   type        = bool
   default     = false
+}
+
+variable "secondary_vpc_cidr" {
+  description = "CIDR block for secondary region VPC"
+  type        = string
+  default     = "10.1.0.0/16"
+}
+
+variable "secondary_azs" {
+  description = "Availability zones for secondary region"
+  type        = list(string)
+
+  default = [
+    "ap-southeast-1a",
+    "ap-southeast-1b"
+  ]
 }

@@ -9,3 +9,9 @@ variable "vpc_id" {
 variable "my_ip" {
   type = string
 }
+
+variable "create_jenkins_sg" {
+  description = "Whether to create the Jenkins security group"
+  type        = bool
+  default     = true
+}
